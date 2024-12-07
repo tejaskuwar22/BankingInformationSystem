@@ -16,7 +16,8 @@ public class BankingSystem {
             System.out.println("2.View All Users");
             System.out.println("3.Deposit Money");
             System.out.println("4.Withdraw Money");
-            System.out.println("5.Exit System");
+            System.out.println("5.Transfer Funds");
+            System.out.println("6.Exit System");
             System.out.println("Select an option : ");
 
             int ch = scan.nextInt();
@@ -36,6 +37,9 @@ public class BankingSystem {
                     withdrawMoney(scan);
                     break;
                 case 5:
+                    transferFunds(scan);
+                    break;
+                case 6:
                     System.out.println("Exiting the system...");
                     scan.close();
                     return;
@@ -43,6 +47,16 @@ public class BankingSystem {
                     System.out.println("Invalid Choice. Please try again !");
             }
         }
+    }
+
+    //Method for finding the user
+    private static User findUser(int accountNumber){
+        for(User user : users){
+            if(user.getAccountNumber() == accountNumber){
+                return user;
+            }
+        }
+        return null;
     }
 
     //Method for new user registration
@@ -62,7 +76,7 @@ public class BankingSystem {
         User user = new User(name, address, contact, initialDeposit);
         users.add(user);
 
-        System.out.println("User Registration Successfull!");
+        System.out.println("User Registration Successful!");
         System.out.println(user);
     }
 
@@ -123,13 +137,41 @@ public class BankingSystem {
         }
     }
 
-    //Method for finding the user
-    private static User findUser(int accountNumber){
-        for(User user : users){
-            if(user.getAccountNumber() == accountNumber){
-                return user;
-            }
+    //Method for funds transfer
+    private static void transferFunds(Scanner scan){
+        System.out.println("Enter senders account number : ");
+        int senderAccountNumber = scan.nextInt();
+
+        User sender = findUser(senderAccountNumber);
+        if(sender == null){
+            System.out.println("Sender account not found!");
+            return;
         }
-        return null;
+
+        System.out.println("Enter receivers account number : ");
+        int receiverAccountNumber = scan.nextInt();
+
+        User receiver = findUser(receiverAccountNumber);
+        if(receiver == null){
+            System.out.println("Receiver account not found!");
+            return;
+        }
+
+        System.out.println("Enter amount to transfer : ");
+        double amount = scan.nextDouble();
+
+        if(amount <= 0){
+            System.out.println("Invalid amount. Please enter positive value.");
+            return;
+        }
+
+        if(sender.withdraw(amount)){
+            receiver.deposit(amount);
+            System.out.println("Funds Transfer Successful!");
+            System.out.println("Senders updated balance : "+sender.getBalance());
+            System.out.println("Receivers updated balance : "+receiver.getBalance());
+        }else{
+            System.out.println("Funds transfer failed! Insufficient balance in senders account.");
+        }
     }
 }
