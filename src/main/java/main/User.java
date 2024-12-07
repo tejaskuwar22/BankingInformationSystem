@@ -38,6 +38,9 @@ public class User{
     public void setContact(String contact){
         this.contact = contact;
     }
+    public double getBalance(){
+        return balance;
+    }
     //Method for deposit money
     public void deposit(double amount){
         if(amount > 0){

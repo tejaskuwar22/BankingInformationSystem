@@ -14,7 +14,9 @@ public class BankingSystem {
         while(true){
             System.out.println("\n1.Register User");
             System.out.println("2.View All Users");
-            System.out.println("3.Exit System");
+            System.out.println("3.Deposit Money");
+            System.out.println("4.Withdraw Money");
+            System.out.println("5.Exit System");
             System.out.println("Select an option : ");
 
             int ch = scan.nextInt();
@@ -28,6 +30,12 @@ public class BankingSystem {
                     displayUser();
                     break;
                 case 3:
+                    depositMoney(scan);
+                    break;
+                case 4:
+                    withdrawMoney(scan);
+                    break;
+                case 5:
                     System.out.println("Exiting the system...");
                     scan.close();
                     return;
@@ -57,6 +65,7 @@ public class BankingSystem {
         System.out.println("User Registration Successfull!");
         System.out.println(user);
     }
+
     //Method for displaying all users
     private static void displayUser(){
         if(users.isEmpty()){
@@ -66,5 +75,61 @@ public class BankingSystem {
         for(User user : users){
             System.out.println("\n"+user);
         }
+    }
+
+    //Method for money deposit
+    private static void depositMoney(Scanner scan){
+        System.out.println("Enter Account Number : ");
+        int accountNumber = scan.nextInt();
+
+        User user = findUser(accountNumber);
+        if(user == null){
+            System.out.println("Account not found.");
+            return;
+        }
+        System.out.println("Enter amount to deposit : ");
+        double amount = scan.nextDouble();
+
+        if(amount < 0){
+            System.out.println("Invalid amount. Please enter the positive value.");
+            return;
+        }
+        user.deposit(amount);
+        System.out.println("Amount deposited successfully.\nBalance : "+user.getBalance());
+    }
+
+    //Method for money withdrawal
+    private static void withdrawMoney(Scanner scan){
+        System.out.println("Enter Account Number : ");
+        int accountNumber = scan.nextInt();
+
+        User user = findUser(accountNumber);
+        if(user == null){
+            System.out.println("Account not found.");
+            return;
+        }
+        System.out.println("Enter amount to withdraw : ");
+        double amount = scan.nextDouble();
+
+        if(amount <= 0){
+            System.out.println("Invalid amount. Please enter the positive value.");
+            return;
+        }
+
+        if(user.withdraw(amount)){
+            System.out.println("Amount withdrawal successfully.\nBalance : "+user.getBalance());
+        }else{
+            System.out.println("Insufficient Balance. Withdraw failed.");
+        }
+    }
+
+    //Method for finding the user
+    private static User findUser(int accountNumber){
+        for(User user : users){
+            if(user.getAccountNumber() == accountNumber){
+                return user;
+            }
+        }
+        return null;
     }
 }
