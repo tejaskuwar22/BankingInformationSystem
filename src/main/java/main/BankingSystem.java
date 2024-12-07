@@ -10,7 +10,7 @@ public class BankingSystem {
     private static User loggedInUser;
 
     //Main Method
-    public static void main(String[] args) {
+    public static void startBankingSystem(){
         loadUsers();
         loadTransactions();
         Scanner scan = new Scanner(System.in);
