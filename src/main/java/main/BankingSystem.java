@@ -1,5 +1,6 @@
 package main;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,7 +9,10 @@ public class BankingSystem {
     private static final List<User> users = new ArrayList<>();
     private static User loggedInUser;
 
+    //Main Method
     public static void main(String[] args) {
+        loadUsers();
+        loadTransactions();
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Welcome to the Banking Information System");
@@ -36,6 +40,8 @@ public class BankingSystem {
                     case 2 -> login(scan);
                     case 3 -> {
                         System.out.println("Exiting the system...");
+                        saveUsers();
+                        saveTransactions();
                         scan.close();
                         return;
                     }
@@ -228,6 +234,75 @@ public class BankingSystem {
             for(String transaction : history){
                 System.out.println(transaction);
             }
+        }
+    }
+
+    //Method for loading user data in text file
+    private static void loadUsers(){
+        try(BufferedReader br = new BufferedReader(new FileReader("src/data/users.txt"))){
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(",");
+                int accountNumber = Integer.parseInt(parts[0]);
+                String name = parts[1];
+                String address = parts[2];
+                String contact = parts[3];
+                String hashedPassword = parts[4];
+                double balance = Double.parseDouble(parts[5]);
+
+                User user = new User(name, address, contact, hashedPassword, balance);
+                users.add(user);
+            }
+        }catch(IOException e){
+            System.out.println("No existing data found.");
+        }
+    }
+
+    //Method for loading transactions data in text file
+    private static void loadTransactions(){
+        try(BufferedReader br = new BufferedReader(new FileReader("src/data/transactions.txt"))){
+            String line;
+            while((line = br.readLine()) != null){
+                String[] parts = line.split(",",2);
+                int accountNumber = Integer.parseInt(parts[0]);
+                String transaction = parts[1];
+
+                User user = findUser(accountNumber);
+                if(user != null){
+                    user.addTransaction(transaction);
+                }
+            }
+        }catch(IOException e){
+            System.out.println("No existing transaction data found.");
+        }
+    }
+
+    //Method for writing user data in text file
+    private static void saveUsers(){
+        try(PrintWriter pw = new PrintWriter(new FileWriter("src/data/users.txt"))){
+            for(User user : users){
+                pw.println(user.getAccountNumber() + "," +
+                        user.getName() + "," +
+                        user.getAddress() + "," +
+                        user.getContact() + "," +
+                        user.getHashedPassword() + "," +
+                        user.getBalance());
+            }
+        }catch(IOException e){
+            System.out.println("Error saving user data."+e.getMessage());
+        }
+    }
+
+    //Method for writing transaction history in text file
+    private static void saveTransactions(){
+        try(PrintWriter pw = new PrintWriter(new FileWriter("src/data/transactions.txt"))){
+            for(User user : users){
+                for(String transaction : user.getTransactionHistory()){
+                    pw.println(user.getAccountNumber()+ "," +transaction);
+                }
+            }
+        }catch(IOException e){
+            System.out.println("Error saving transaction data "+e.getMessage());
         }
     }
 }

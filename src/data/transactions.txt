@@ -1,0 +1,2 @@
+1000,Accounted created with initial deposit : 2500000.0
+1000,Deposited : 100000.0 | Balance : 2600000.0

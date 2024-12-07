@@ -53,6 +53,9 @@ public class User{
     public void setContact(String contact){
         this.contact = contact;
     }
+    public String getHashedPassword(){
+        return this.hashedPassword;
+    }
     public double getBalance(){
         return balance;
     }
