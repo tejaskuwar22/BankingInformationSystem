@@ -1,4 +1,6 @@
 package main;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class User{
@@ -8,6 +10,7 @@ public class User{
     private String address;
     private String contact;
     private double balance;
+    private final List<String> transactionHistory;
 
     public User(String name, String address, String contact, double initialDeposit){
         this.accountNumber = accountNumberGenerator.getAndIncrement();
@@ -15,6 +18,8 @@ public class User{
         this.address = address;
         this.contact = contact;
         this.balance = initialDeposit;
+        this.transactionHistory = new ArrayList<>();
+        addTransaction("Accounted created with initial deposit : "+initialDeposit);
     }
 
     public int getAccountNumber(){
@@ -45,6 +50,7 @@ public class User{
     public void deposit(double amount){
         if(amount > 0){
             this.balance += amount;
+            addTransaction("Deposited : "+amount+" | Balance : "+balance);
         }
     }
 
@@ -52,10 +58,20 @@ public class User{
     public boolean withdraw(double amount){
         if(amount > 0 && amount <= balance){
             this.balance -= amount;
+            addTransaction("Withdrew : "+amount+" | Balance : "+balance);
             return true;
         }
         return false; //Less balance
     }
+
+    public void addTransaction(String transactionDetails){
+        transactionHistory.add(transactionDetails);
+    }
+
+    public List<String> getTransactionHistory(){
+        return transactionHistory;
+    }
+
     @Override
     public String toString(){
         return "Account Number : "+accountNumber+

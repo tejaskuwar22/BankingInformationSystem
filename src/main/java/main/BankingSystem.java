@@ -17,7 +17,8 @@ public class BankingSystem {
             System.out.println("3.Deposit Money");
             System.out.println("4.Withdraw Money");
             System.out.println("5.Transfer Funds");
-            System.out.println("6.Exit System");
+            System.out.println("6.View Account Statement");
+            System.out.println("7.Exit System");
             System.out.println("Select an option : ");
 
             int ch = scan.nextInt();
@@ -40,6 +41,9 @@ public class BankingSystem {
                     transferFunds(scan);
                     break;
                 case 6:
+                    viewAccountStatement(scan);
+                    break;
+                case 7:
                     System.out.println("Exiting the system...");
                     scan.close();
                     return;
@@ -172,6 +176,28 @@ public class BankingSystem {
             System.out.println("Receivers updated balance : "+receiver.getBalance());
         }else{
             System.out.println("Funds transfer failed! Insufficient balance in senders account.");
+        }
+    }
+
+    //Method for viewing account statement
+    private static void viewAccountStatement(Scanner scan){
+        System.out.println("Enter account number : ");
+        int accountNumber = scan.nextInt();
+
+        User user = findUser(accountNumber);
+        if(user == null){
+            System.out.println("Account not found!");
+            return;
+        }
+
+        System.out.println("Transaction History for Account Number : "+accountNumber);
+        List<String> history = user.getTransactionHistory();
+        if(history.isEmpty()) {
+            System.out.println("No transactions found.");
+        }else{
+            for(String transaction : history){
+                System.out.println(transaction);
+            }
         }
     }
 }
