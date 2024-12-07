@@ -1,54 +1,59 @@
 package main;
-import java.net.SocketOption;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class BankingSystem {
     private static final List<User> users = new ArrayList<>();
+    private static User loggedInUser;
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Welcome to the Banking Information System");
         while(true){
-            System.out.println("\n1.Register User");
-            System.out.println("2.View All Users");
-            System.out.println("3.Deposit Money");
-            System.out.println("4.Withdraw Money");
-            System.out.println("5.Transfer Funds");
-            System.out.println("6.View Account Statement");
-            System.out.println("7.Exit System");
-            System.out.println("Select an option : ");
+            if(loggedInUser == null){
+                System.out.println("\n1.Register User");
+                System.out.println("2.Login User");
+                System.out.println("3.Exit");
+            }else{
+                System.out.println("\n1.View My Details");
+                System.out.println("2.Deposit Money");
+                System.out.println("3.Withdraw Money");
+                System.out.println("4.Transfer Funds");
+                System.out.println("5.View Account Statement");
+                System.out.println("6.Logout User");
+            }
 
+            System.out.println("Select an option : ");
             int ch = scan.nextInt();
             scan.nextLine();
 
-            switch(ch){
-                case 1:
-                    registerUser(scan);
-                    break;
-                case 2:
-                    displayUser();
-                    break;
-                case 3:
-                    depositMoney(scan);
-                    break;
-                case 4:
-                    withdrawMoney(scan);
-                    break;
-                case 5:
-                    transferFunds(scan);
-                    break;
-                case 6:
-                    viewAccountStatement(scan);
-                    break;
-                case 7:
-                    System.out.println("Exiting the system...");
-                    scan.close();
-                    return;
-                default:
-                    System.out.println("Invalid Choice. Please try again !");
+            if(loggedInUser == null) {
+                switch (ch) {
+                    case 1 -> registerUser(scan);
+                    case 2 -> login(scan);
+                    case 3 -> {
+                        System.out.println("Exiting the system...");
+                        scan.close();
+                        return;
+                    }
+                    default -> System.out.println("Invalid Choice. Please try again!");
+                }
+            }else{
+                switch(ch){
+                    case 1 -> displayUser();
+                    case 2 -> depositMoney(scan);
+                    case 3 -> withdrawMoney(scan);
+                    case 4 -> transferFunds(scan);
+                    case 5 -> viewAccountStatement(scan);
+                    case 6 -> {
+                        loggedInUser = null;
+                        System.out.println("Logged out successfully!");
+                    }
+                    default -> System.out.println("Invalid Choice. Please try again!");
+                }
             }
         }
     }
@@ -74,24 +79,49 @@ public class BankingSystem {
         System.out.println("Enter Contact : ");
         String contact = scan.nextLine();
 
+        System.out.println("Enter Password : ");
+        String password = scan.nextLine();
+
         System.out.println("Enter Initial Deposit : ");
         double initialDeposit = scan.nextDouble();
 
-        User user = new User(name, address, contact, initialDeposit);
+        User user = new User(name, address, contact, password, initialDeposit);
         users.add(user);
 
         System.out.println("User Registration Successful!");
         System.out.println(user);
     }
 
-    //Method for displaying all users
-    private static void displayUser(){
-        if(users.isEmpty()){
-            System.out.println("No registered user found.");
+    //Method for user login
+    private static void login(Scanner scan){
+        System.out.println("Enter Account Number : ");
+        int accountNumber = scan.nextInt();
+        scan.nextLine();
+
+        User user = findUser(accountNumber);
+        if(user == null){
+            System.out.println("Account Not Found!");
             return;
         }
-        for(User user : users){
-            System.out.println("\n"+user);
+
+        System.out.println("Enter Password : ");
+        String password = scan.nextLine();
+
+        if(user.validatePassword(password)){
+            loggedInUser = user;
+            System.out.println("Login Successful! Welcome "+user.getName());
+        }else{
+            System.out.println("Invalid Password! Login Failed.");
+        }
+    }
+
+    //Method for displaying user details
+    private static void displayUser(){
+        if(loggedInUser != null){
+            System.out.println("Your Account Details : ");
+            System.out.println(loggedInUser);
+        }else{
+            System.out.println("No user logged in.");
         }
     }
 
