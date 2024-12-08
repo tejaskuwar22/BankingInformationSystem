@@ -15,21 +15,23 @@ public class BankingSystem {
         loadTransactions();
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("Welcome to the Banking Information System");
+        printHeader("Welcome to the Banking Information System");
         while(true){
             if(loggedInUser == null){
-                System.out.println("\n1.Register User");
-                System.out.println("2.Login User");
-                System.out.println("3.Exit");
+                printFooter();
+                System.out.println("| 1 | Register User");
+                System.out.println("| 2 | Login User");
+                System.out.println("| 3 | Exit");
             }else{
-                System.out.println("\n1.View My Details");
-                System.out.println("2.Deposit Money");
-                System.out.println("3.Withdraw Money");
-                System.out.println("4.Transfer Funds");
-                System.out.println("5.View Account Statement");
-                System.out.println("6.Logout User");
+                printFooter();
+                System.out.println("| 1 | View My Details");
+                System.out.println("| 2 | Deposit Money");
+                System.out.println("| 3 | Withdraw Money");
+                System.out.println("| 4 | Transfer Funds");
+                System.out.println("| 5 | View Account Statement");
+                System.out.println("| 6 | Logout User");
             }
-
+            printFooter();
             System.out.println("Select an option : ");
             int ch = scan.nextInt();
             scan.nextLine();
@@ -226,15 +228,17 @@ public class BankingSystem {
             return;
         }
 
-        System.out.println("Transaction History for Account Number : "+accountNumber);
+        printHeader("Transaction History for Account Number : "+accountNumber);
         List<String> history = user.getTransactionHistory();
         if(history.isEmpty()) {
             System.out.println("No transactions found.");
         }else{
             for(String transaction : history){
-                System.out.println(transaction);
+                System.out.println("| "+transaction);
+                printSeparator();
             }
         }
+        printFooter();
     }
 
     //Method for loading user data in text file
@@ -304,5 +308,20 @@ public class BankingSystem {
         }catch(IOException e){
             System.out.println("Error saving transaction data "+e.getMessage());
         }
+    }
+
+    //Methods for enhanced CLI
+    private static void printHeader(String title) {
+        System.out.println("\n*******************************************");
+        System.out.println(title);
+        System.out.println("*******************************************");
+    }
+
+    private static void printFooter() {
+        System.out.println("*******************************************");
+    }
+
+    private static void printSeparator() {
+        System.out.println("-------------------------------------------");
     }
 }
